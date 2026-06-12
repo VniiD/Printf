@@ -6,7 +6,7 @@
 /*   By: vde-alme <vde-alme@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 21:36:27 by vde-alme          #+#    #+#             */
-/*   Updated: 2026/06/11 21:48:07 by vde-alme         ###   ########.fr       */
+/*   Updated: 2026/06/12 15:42:40 by vde-alme         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,14 @@ int		ft_processor(va_list args, t_flags *flags);
 int		ft_print_pad(int total_width, int len, int has_zero);
 int		ft_handle_char(char c, t_flags *flags);
 int		ft_handle_str(char *str, t_flags *flags);
+
+int		ft_handle_int(int n, t_flags *flags);
+int		ft_handle_uint(unsigned int n, t_flags *flags);
+int		ft_handle_hex(unsigned int n, t_flags *flags);
+int		ft_handle_ptr(unsigned long long ptr, t_flags *flags);
+
+void	ft_putnbr_long(long nbr);
+void	ft_puthex_long(unsigned long long nbr, char type);
+int		ft_nbrlen_base(unsigned long long nbr, int base);
 
 #endif

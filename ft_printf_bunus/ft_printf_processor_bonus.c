@@ -6,7 +6,7 @@
 /*   By: vde-alme <vde-alme@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 21:45:22 by vde-alme          #+#    #+#             */
-/*   Updated: 2026/06/11 21:47:29 by vde-alme         ###   ########.fr       */
+/*   Updated: 2026/06/12 15:43:05 by vde-alme         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@ int	ft_processor(va_list args, t_flags *flags)
 		len += ft_handle_char(va_arg(args, int), flags);
 	else if (flags->type == 's')
 		len += ft_handle_str(va_arg(args, char *), flags);
+	else if (flags->type == 'd' || flags->type == 'i')
+		len += ft_handle_int(va_arg(args, int), flags);
+	else if (flags->type == 'u')
+		len += ft_handle_uint(va_arg(args, unsigned int), flags);
+	else if (flags->type == 'x' || flags->type == 'X')
+		len += ft_handle_hex(va_arg(args, unsigned int), flags);
+	else if (flags->type == 'p')
+		len += ft_handle_ptr(va_arg(args, unsigned long long), flags);
 	else if (flags->type == '%')
 		len += ft_handle_char('%', flags);
 	return (len);
