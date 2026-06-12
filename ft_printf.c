@@ -6,7 +6,7 @@
 /*   By: vde-alme <vde-alme@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/11 16:25:21 by vde-alme          #+#    #+#             */
-/*   Updated: 2026/06/11 17:11:44 by vde-alme         ###   ########.fr       */
+/*   Updated: 2026/06/11 21:33:10 by vde-alme         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@ int	ft_eval_format(va_list args, const char format)
 		print_length += ft_print_char(va_arg(args, int));
 	else if (format == 's')
 		print_length += ft_print_str(va_arg(args, char *));
+	else if (format == 'd' || format == 'i')
+		print_length += ft_print_nbr(va_arg(args, int));
+	else if (format == 'u')
+		print_length += ft_print_unsigned(va_arg(args, unsigned int));
+	else if (format == 'x' || format == 'X')
+		print_length += ft_print_hex(va_arg(args, unsigned int), format);
+	else if (format == 'p')
+		print_length += ft_print_ptr(va_arg(args, unsigned long long));
 	else if (format == '%')
 		print_length += ft_print_pct();
 	return (print_length);
