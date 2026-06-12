@@ -23,7 +23,6 @@ int	ft_processor(va_list args, t_flags *flags)
 		len += ft_handle_str(va_arg(args, char *), flags);
 	else if (flags->type == '%')
 		len += ft_handle_char('%', flags);
-	// Os próximos "else if" para d, i, u, x, X, p entrarão na Parte 3
 	return (len);
 }
 
