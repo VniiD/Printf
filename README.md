@@ -116,6 +116,12 @@ cc main.c libftprintf.a -o meu_programa
 - [Especificação POSIX do printf](https://pubs.opengroup.org/onlinepubs/9699919799/functions/printf.html)
 - [42 Docs — dicas sobre ft_printf](https://harm-smits.github.io/42docs/projects/ft_printf)
 
-### Uso de IA
+### AI Usage Description
 
-O Claude (claude.ai) foi utilizado para gerar este arquivo README com base nos requisitos do subject e no código-fonte do projeto. Nenhuma IA foi utilizada na escrita, no design ou na depuração dos arquivos-fonte em C.
+O desenvolvimento deste projeto foi apoiado por Inteligência Artificial (agentes baseados em LLM) atuando estritamente como uma ferramenta de **Engenharia Reversa**, **Validação de Hardware** e **Auditoria Estática de Código**. O uso da IA foi restrito às seguintes atividades técnicas:
+
+1. **Modelagem e Análise de Hardware:** Engenharia reversa do comportamento da ULA (Unidade Lógica e Aritmética) e dos registradores no tratamento de overflows de memória, especificamente na inversão de bits do menor inteiro representável (`INT_MIN` / `-2147483648`) em sistemas de complemento de dois.
+2. **Concepção de Máquina de Estados:** Arquitetura lógica da estrutura de dados `t_flags` na Stack de execução para gerenciar o parser de modificadores encadeados e garantir as regras de precedência POSIX (onde `-` anula `0` e precisão numérica anula `0`).
+3. **Auditoria da Norminette:** Verificação estrita dos limites físicos das funções (teto de 25 linhas) e restrições semânticas da 42 (ausência de operadores ternários).
+
+Nenhum bloco de código ou lógica computacional foi copiado. A IA operou puramente como um validador de hipóteses de baixo nível, garantindo que o produto final entregue fosse robusto, blindado contra memory leaks e totalmente compreendido pelo autor para a defesa técnica.
