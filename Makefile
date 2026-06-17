@@ -1,22 +1,32 @@
-// cabeçalho
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: vde-alme <vde-alme@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/06/17 14:22:17 by vde-alme          #+#    #+#              #
+#    Updated: 2026/06/17 14:22:20 by vde-alme         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-NAME        = libftprintf.a
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror
-AR          = ar rcs
-RM          = rm -f
+NAME	= libftprintf.a
+CC		= cc
+CFLAGS	= -Wall -Wextra -Werror
+AR		= ar rcs
+RM		= rm -f
 
-SRCS        = ft_printf.c \
-              ft_parser.c \
-              ft_utils.c \
-              ft_print_char.c \
-              ft_print_str.c \
-              ft_print_ptr.c \
-              ft_print_int.c \
-              ft_print_uint.c \
-              ft_print_hex.c
+SRCS	= ft_printf.c \
+			ft_parser.c \
+			ft_utils.c \
+			ft_print_char.c \
+			ft_print_str.c \
+			ft_print_ptr.c \
+			ft_print_int.c \
+			ft_print_uint.c \
+			ft_print_hex.c
 
-OBJS        = $(SRCS:.c=.o)
+OBJS	= $(SRCS:.c=.o)
 
 all: $(NAME)
 

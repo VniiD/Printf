@@ -1,4 +1,14 @@
-//cabeçalho
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vde-alme <vde-alme@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/17 14:22:36 by vde-alme          #+#    #+#             */
+/*   Updated: 2026/06/17 14:28:05 by vde-alme         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "ft_printf.h"
 
@@ -14,7 +24,7 @@ static void	ft_init_flags(t_flags *flags)
 	flags->plus = 0;
 }
 
-int	ft_handle_print(char specifier , va_list args, t_flags *flags)
+int	ft_handle_print(char specifier, va_list args, t_flags *flags)
 {
 	int	len;
 
@@ -38,10 +48,29 @@ int	ft_handle_print(char specifier , va_list args, t_flags *flags)
 	return (len);
 }
 
+static int	ft_parse_and_print(const char *format, int *i, va_list args)
+{
+	t_flags	flags;
+	int		len;
+
+	len = 0;
+	if (format[*i] == '%' && format[*i + 1])
+	{
+		ft_init_flags(&flags);
+		ft_parse_flags(format, i, &flags, args);
+		if (format[*i])
+			len += ft_handle_print(format[*i], args, &flags);
+	}
+	else
+		len += ft_putchar_len(format[*i]);
+	if (format[*i])
+		(*i)++;
+	return (len);
+}
+
 int	ft_printf(const char *format, ...)
 {
 	va_list	args;
-	t_flags	flags;
 	int		i;
 	int		len;
 
@@ -51,19 +80,7 @@ int	ft_printf(const char *format, ...)
 	i = 0;
 	len = 0;
 	while (format[i])
-    {
-	if (format[i] == '%' && format[i + 1])
-	{
-		ft_init_flags(&flags);
-		ft_parse_flags(format, &i, &flags, args);
-		if (format[i])
-			len += ft_handle_print(format[i], args, &flags);
-	}
-	else
-		len += ft_putchar_len(format[i]);
-	if (format[i])
-		i++;
-    }
+		len += ft_parse_and_print(format, &i, args);
 	va_end(args);
 	return (len);
 }
