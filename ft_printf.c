@@ -6,7 +6,7 @@
 /*   By: vde-alme <vde-alme@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 14:22:36 by vde-alme          #+#    #+#             */
-/*   Updated: 2026/06/17 14:28:05 by vde-alme         ###   ########.fr       */
+/*   Updated: 2026/06/17 14:59:40 by vde-alme         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_handle_print(char specifier, va_list args, t_flags *flags)
 
 	len = 0;
 	if (specifier == 'c')
-		len += ft_print_char(va_arg(args, int), flags);
+		len += ft_print_char((char)va_arg(args, int), flags);
 	else if (specifier == 's')
 		len += ft_print_str(va_arg(args, char *), flags);
 	else if (specifier == 'p')
@@ -54,17 +54,13 @@ static int	ft_parse_and_print(const char *format, int *i, va_list args)
 	int		len;
 
 	len = 0;
-	if (format[*i] == '%' && format[*i + 1])
-	{
-		ft_init_flags(&flags);
-		ft_parse_flags(format, i, &flags, args);
-		if (format[*i])
-			len += ft_handle_print(format[*i], args, &flags);
-	}
-	else
-		len += ft_putchar_len(format[*i]);
+	ft_init_flags(&flags);
+	ft_parse_flags(format, i, &flags);
 	if (format[*i])
+	{
+		len += ft_handle_print(format[*i], args, &flags);
 		(*i)++;
+	}
 	return (len);
 }
 
@@ -80,7 +76,15 @@ int	ft_printf(const char *format, ...)
 	i = 0;
 	len = 0;
 	while (format[i])
-		len += ft_parse_and_print(format, &i, args);
+	{
+		if (format[i] == '%' && format[i + 1])
+			len += ft_parse_and_print(format, &i, args);
+		else
+		{
+			len += ft_putchar_len(format[i]);
+			i++;
+		}
+	}
 	va_end(args);
 	return (len);
 }

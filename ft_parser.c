@@ -6,7 +6,7 @@
 /*   By: vde-alme <vde-alme@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 14:23:51 by vde-alme          #+#    #+#             */
-/*   Updated: 2026/06/17 14:23:53 by vde-alme         ###   ########.fr       */
+/*   Updated: 2026/06/17 14:59:06 by vde-alme         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static void	ft_parse_bonus_flags(const char *format, int *i, t_flags *flags)
 {
 	while (format[*i] == '-' || format[*i] == '0' || format[*i] == '#'
-			|| format[*i] == ' ' || format[*i] == '+')
+		|| format[*i] == ' ' || format[*i] == '+')
 	{
 		if (format[*i] == '-')
 			flags->minus = 1;
@@ -29,16 +29,17 @@ static void	ft_parse_bonus_flags(const char *format, int *i, t_flags *flags)
 			flags->plus = 1;
 		(*i)++;
 	}
+	if (flags->minus == 1)
+		flags->zero = 0;
+	if (flags->plus == 1)
+		flags->space = 0;
 }
 
-int	ft_parse_flags(const char *format, int *i, t_flags *flags, va_list args)
+void	ft_parse_flags(const char *format, int *i, t_flags *flags)
 {
-	int	start;
-
-	start = *i;
 	(*i)++;
 	ft_parse_bonus_flags(format, i, flags);
-	while(ft_isdigit(format[*i]))
+	while (ft_isdigit(format[*i]))
 	{
 		flags->width = (flags->width * 10) + (format[*i] - '0');
 		(*i)++;
@@ -46,14 +47,13 @@ int	ft_parse_flags(const char *format, int *i, t_flags *flags, va_list args)
 	if (format[*i] == '.')
 	{
 		flags->dot = 1;
+		flags->zero = 0;
 		(*i)++;
 		while (ft_isdigit(format[*i]))
 		{
-			flags->precision = (flags->precision * 10) + (format[*i] - '0');
+			flags->precision = (flags->precision * 10) + 
+				(format[*i] - '0');
 			(*i)++;
 		}
 	}
-	if (flags->minus == 1)
-			flags->zero = 0;
-	return (*i - start);
 }
