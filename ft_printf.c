@@ -55,7 +55,7 @@ int	ft_printf(const char *format, ...)
 		if (format[i] == '%' && format[i + 1])
 		{
 			ft_init_flags(&flags);
-			i += ft_parse_flags(format, &i, &flags, args);
+			ft_parse_flags(format, &i, &flags, args);
 			len += ft_handle_print(format[i], args, &flags);
 		}
 		else
