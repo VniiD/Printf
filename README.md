@@ -1,127 +1,99 @@
-*Este projeto foi criado como parte do currículo da 42 por vde-alme.*
+*This project has been created as part of the 42 curriculum by vde-alme.*
 
-# ft_printf
+# ft_printf — @42sp
 
-## Descrição
-
-`ft_printf` é uma reimplementação da função `printf()` da biblioteca padrão do C. O objetivo é compreender o funcionamento das funções variádicas em C e construir do zero uma biblioteca de formatação robusta e extensível.
-
-A biblioteca é compilada em um arquivo estático (`libftprintf.a`) e suporta todas as conversões obrigatórias, além do conjunto completo de flags do bônus.
-
-### Conversões suportadas
-
-| Especificador | Descrição |
-|---------------|-----------|
-| `%c` | Imprime um único caractere |
-| `%s` | Imprime uma string |
-| `%p` | Imprime o endereço de um ponteiro em hexadecimal |
-| `%d` / `%i` | Imprime um inteiro decimal com sinal |
-| `%u` | Imprime um inteiro decimal sem sinal |
-| `%x` / `%X` | Imprime um inteiro em hexadecimal (minúsculo/maiúsculo) |
-| `%%` | Imprime um sinal de porcentagem literal |
-
-### Flags suportadas (bônus)
-
-| Flag | Descrição |
-|------|-----------|
-| `-` | Alinha a saída à esquerda dentro da largura do campo |
-| `0` | Preenche com zeros em vez de espaços |
-| `.` | Precisão — limita dígitos para números, caracteres para strings |
-| `width` | Largura mínima do campo |
-| `#` | Adiciona prefixo `0x` / `0X` para hexadecimal |
-| `+` | Sempre imprime o sinal para inteiros |
-| ` ` (espaço) | Imprime um espaço antes de inteiros positivos |
+> Because `ft_putnbr()` and `ft_putstr()` aren't enough.
 
 ---
 
-## Algoritmo e Estrutura de Dados
+## Description
 
-### Struct `t_flags`
+A custom reimplementation of the C standard library's `printf()` function, built strictly in compliance with the **Norminette**, without memory leaks, and hardened against undefined behavior.
 
-Todas as flags de formato extraídas de um especificador `%...` são armazenadas em uma única estrutura `t_flags`:
+The project deepens knowledge of low-level software architecture through the use of variadic functions (`stdarg.h`), direct stack manipulation, and format string lexical parsing.
 
-```c
-typedef struct s_flags
-{
-    int     dash;
-    int     zero;
-    int     dot;
-    int     width;
-    int     precision;
-    int     hash;
-    int     space;
-    int     plus;
-    char    type;
-} t_flags;
-```
+This version implements the full bonus path through a modular architecture based on a state-control structure (`t_flags`), supporting field width, precision, and flag management across all conversions.
 
-Essa escolha mantém todo o contexto de uma conversão em um único lugar, facilitando o repasse para os handlers individuais sem uma lista longa de parâmetros. Cada campo corresponde diretamente a uma flag ou valor do especificador de formato.
+### Supported Conversions
 
-### Pipeline de parsing
+| Specifier | Description |
+|-----------|-------------|
+| `%c` | Prints a single character |
+| `%s` | Prints a string (null-pointer safe) |
+| `%p` | Prints a 64-bit memory address in lowercase hexadecimal |
+| `%d` / `%i` | Prints a signed 32-bit integer (with native `INT_MIN` handling) |
+| `%u` | Prints an unsigned 32-bit integer |
+| `%x` | Prints a number in lowercase hexadecimal |
+| `%X` | Prints a number in uppercase hexadecimal |
+| `%%` | Prints a literal percent sign |
 
-Quando `ft_printf` encontra um `%`, chama `ft_parse_flags`, que percorre os caracteres um a um e preenche a struct `t_flags` antes de despachar para `ft_processor`. O parser trata as flags (`-`, `0`, `#`, ` `, `+`), em seguida os campos numéricos de largura e precisão (via `ft_parse_digits`) e, por fim, o caractere de conversão.
+### Bonus Flags Implemented
 
-A função `ft_parse_digits` lê a sequência de dígitos e atribui o valor a `flags->width` ou `flags->precision` dependendo se um `.` já foi encontrado — uma forma limpa de tratar ambos os campos com uma única função.
-
-### Dispatch
-
-`ft_processor` funciona como um roteador: lê `flags->type` e chama o handler adequado (`ft_handle_char`, `ft_handle_str`, `ft_handle_int`, `ft_handle_uint`, `ft_handle_hex`, `ft_handle_ptr`). Isso mantém cada conversão isolada e facilita manutenção e extensão.
-
-### Lógica de preenchimento (padding)
-
-`ft_print_pad(total_width, len, has_zero)` é um utilitário único que trata tanto o preenchimento com zeros quanto com espaços, usado de forma uniforme em todos os handlers. O padding é aplicado antes ou depois do valor dependendo da flag `-`.
-
-Para inteiros e valores hexadecimais, o prefixo (sinal, `+`, ` `, `0x`, `0X`) é impresso entre o espaço à esquerda e o zero de preenchimento, reproduzindo corretamente o comportamento do `printf` original.
+| Flag | Behavior |
+|------|----------|
+| `-` | Left-aligns output within the specified field width |
+| `0` | Pads field width with leading zeros (ignored if `-` or integer precision is active) |
+| `.` | Precision specifier (max length for strings, exact digit count for integers) |
+| `#` | Alternate format for hexadecimals — injects `0x` or `0X` prefix if value is non-zero |
+| ` ` (space) | Inserts a space before positive signed numbers when no sign is printed |
+| `+` | Forces display of the `+` sign for positive integers |
+| `width` | Minimum field width via decimal digits in the format string |
 
 ---
 
-## Instruções
+## Algorithm and Data Structure
 
-### Compilação
+The core design decision was to centralize all formatting state into a single `t_flags` struct, reset on every `%` encounter. This avoids passing many parameters across functions and keeps each module focused on a single conversion.
+
+**Parsing** (`ft_parse_flags`) scans flags, width, and precision in a single left-to-right pass over the format string, advancing the index pointer shared with the main loop — no backtracking required.
+
+**Padding** in each print function is computed arithmetically before any output is written: the number of leading spaces, leading zeros, and trailing spaces are derived from `width`, `precision`, and the base length of the value being printed. This means the function always knows exactly how many characters it will output, allowing a correct return value (total characters written) without any buffering.
+
+**Recursion** is used for base conversion (hex and decimal digit extraction), which is clean and Norminette-compliant since the recursion depth is bounded by the number of digits (at most 20 for a 64-bit value).
+
+The `%p` specifier handles the `NULL` pointer case explicitly, printing `(nil)` — matching the behavior of `printf` on Linux.
+
+---
+
+## Instructions
+
+### Compile the static library
 
 ```bash
-make        # compila a libftprintf.a
-make bonus  # mesmo alvo (bônus integrado à compilação principal)
-make clean  # remove os arquivos objeto
-make fclean # remove os arquivos objeto e a biblioteca
-make re     # recompilação completa
+make
 ```
 
-### Uso
+Produces `libftprintf.a` at the repository root.
 
-Inclua o header e vincule a biblioteca ao compilar seu projeto:
-
-```c
-#include "ft_printf_bonus.h"
-
-int main(void)
-{
-    ft_printf("Olá, %s! Você tem %d anos.\n", "mundo", 42);
-    ft_printf("Hex: %#010x\n", 255);
-    ft_printf("Ponteiro: %p\n", (void *)main);
-    return (0);
-}
-```
+### Other Makefile rules
 
 ```bash
-cc main.c libftprintf.a -o meu_programa
+make clean    # Remove intermediate object files
+make fclean   # Remove objects and the final binary
+make re       # Force full recompilation
+```
+
+### Use in your own project
+
+Include the header and link the compiled library:
+
+```bash
+cc main.c libftprintf.a -o my_program
 ```
 
 ---
 
-## Recursos
+## Resources
 
-- [printf(3) — man page Linux](https://man7.org/linux/man-pages/man3/printf.3.html)
-- [Funções variádicas em C — cppreference](https://en.cppreference.com/w/c/variadic)
-- [Especificação POSIX do printf](https://pubs.opengroup.org/onlinepubs/9699919799/functions/printf.html)
-- [42 Docs — dicas sobre ft_printf](https://harm-smits.github.io/42docs/projects/ft_printf)
+- [C `printf` man page — cppreference.com](https://en.cppreference.com/w/c/io/fprintf)
+- [Variadic functions in C — `stdarg.h`](https://en.cppreference.com/w/c/variadic)
+- [printf format string specification — Linux man pages](https://man7.org/linux/man-pages/man3/printf.3.html)
+- [42 Norminette](https://github.com/42School/norminette)
 
-### AI Usage Description
+### AI Usage Declaration
 
-O desenvolvimento deste projeto foi apoiado por Inteligência Artificial (agentes baseados em LLM) atuando estritamente como uma ferramenta de **Engenharia Reversa**, **Validação de Hardware** e **Auditoria Estática de Código**. O uso da IA foi restrito às seguintes atividades técnicas:
+In full compliance with 42's integrity and transparency guidelines, Large Language Models (LLMs) were used strictly as architectural review assistants.
 
-1. **Modelagem e Análise de Hardware:** Engenharia reversa do comportamento da ULA (Unidade Lógica e Aritmética) e dos registradores no tratamento de overflows de memória, especificamente na inversão de bits do menor inteiro representável (`INT_MIN` / `-2147483648`) em sistemas de complemento de dois.
-2. **Concepção de Máquina de Estados:** Arquitetura lógica da estrutura de dados `t_flags` na Stack de execução para gerenciar o parser de modificadores encadeados e garantir as regras de precedência POSIX (onde `-` anula `0` e precisão numérica anula `0`).
-3. **Auditoria da Norminette:** Verificação estrita dos limites físicos das funções (teto de 25 linhas) e restrições semânticas da 42 (ausência de operadores ternários).
+**Where AI was used:** Validation of loop scope reduction in conditional padding functions, ensuring that `while` control blocks respected the Norminette's 25-line function limit without altering logical behavior or breaking C ISO flag precedence rules.
 
-Nenhum bloco de código ou lógica computacional foi copiado. A IA operou puramente como um validador de hipóteses de baixo nível, garantindo que o produto final entregue fosse robusto, blindado contra memory leaks e totalmente compreendido pelo autor para a defesa técnica.
+**What was NOT generated by AI:** The positional base-conversion logic on the stack, manual buffer handling, and the 64-bit virtual pointer analysis for the `%p` specifier — all developed from scratch and debugged natively on Linux.
