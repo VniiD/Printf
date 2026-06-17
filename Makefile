@@ -1,4 +1,3 @@
-
 // cabeçalho
 
 NAME        = libftprintf.a
@@ -27,6 +26,8 @@ $(NAME): $(OBJS)
 %.o: %.c ft_printf.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
+bonus: $(NAME)
+
 clean:
 	$(RM) $(OBJS)
 
@@ -35,4 +36,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
