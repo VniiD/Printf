@@ -40,7 +40,7 @@ int	ft_handle_print(char specifier , va_list args, t_flags *flags)
 
 int	ft_printf(const char *format, ...)
 {
-	va_list args;
+	va_list	args;
 	t_flags	flags;
 	int		i;
 	int		len;
@@ -51,17 +51,19 @@ int	ft_printf(const char *format, ...)
 	i = 0;
 	len = 0;
 	while (format[i])
+    {
+	if (format[i] == '%' && format[i + 1])
 	{
-		if (format[i] == '%' && format[i + 1])
-		{
-			ft_init_flags(&flags);
-			ft_parse_flags(format, &i, &flags, args);
+		ft_init_flags(&flags);
+		ft_parse_flags(format, &i, &flags, args);
+		if (format[i])
 			len += ft_handle_print(format[i], args, &flags);
-		}
-		else
-			len += ft_putchar_len(format[i]);
-		i++;
 	}
+	else
+		len += ft_putchar_len(format[i]);
+	if (format[i])
+		i++;
+    }
 	va_end(args);
 	return (len);
 }
